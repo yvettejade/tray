@@ -215,9 +215,14 @@ int fullTask()
      }
    }
    //arms down
-   else if(Controller1.ButtonL2.pressing() && !liftLimit.pressing())
+   else if(Controller1.ButtonL2.pressing())
    {
-     lift.spin(directionType::rev, 60, percentUnits::pct);
+     tilter.startSpinTo(1000, rotationUnits::raw, 100, velocityUnits::pct);
+     lift.spinTo(armLift, rotationUnits::raw, 100, velocityUnits::pct);
+     while(Controller1.ButtonL2.pressing())
+     {
+       task::sleep(20);
+     }
    }
    else
    {
