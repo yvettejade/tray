@@ -31,7 +31,8 @@ using namespace vex;
 competition Competition;
 
 int dropOff=4600;
-int armLift=2900;
+int armLiftHigh=2850;
+int armLiftLow=2075;
 bool driving=false;
 bool trayUp=false;
 
@@ -160,6 +161,7 @@ int fullTask()
    }
    if(Controller1.ButtonLeft.pressing())
    {
+     tilter.setBrake(brakeType::coast);
      if(!liftLimit.pressing())
      {
        lift.spin(directionType::rev, 100, percentUnits::pct);
@@ -203,22 +205,24 @@ int fullTask()
      rightIntake.stop();
      leftIntake.stop();
    }
-   //arms up
+   //medium tower
    if(Controller1.ButtonL1.pressing())
    {
      //lineWork(100);
-     tilter.startSpinTo(1600, rotationUnits::raw, 100, velocityUnits::pct);
-     lift.spinTo(armLift, rotationUnits::raw, 100, velocityUnits::pct);
+     tilter.setBrake(brakeType::hold);
+     tilter.startSpinTo(1500, rotationUnits::raw, 100, velocityUnits::pct);
+     lift.spinTo(armLiftHigh, rotationUnits::raw, 100, velocityUnits::pct);
      while(Controller1.ButtonL1.pressing())
      {
        task::sleep(20);
      }
    }
-   //arms down
+   //low tower
    else if(Controller1.ButtonL2.pressing())
    {
-     tilter.startSpinTo(1000, rotationUnits::raw, 100, velocityUnits::pct);
-     lift.spinTo(armLift, rotationUnits::raw, 100, velocityUnits::pct);
+     tilter.setBrake(brakeType::hold);
+     tilter.startSpinTo(1500, rotationUnits::raw, 100, velocityUnits::pct);
+     lift.spinTo(armLiftLow, rotationUnits::raw, 100, velocityUnits::pct);
      while(Controller1.ButtonL2.pressing())
      {
        task::sleep(20);
@@ -232,7 +236,7 @@ int fullTask()
    if(Controller1.ButtonA.pressing())
    {
      //lineWork(140);
-    
+     tilter.setBrake(brakeType::hold);
      double speedTilter=-0.004*tilter.rotation(rotationUnits::raw)+90;
      while(tilter.rotation(rotationUnits::raw)<dropOff)
      {
@@ -250,7 +254,7 @@ int fullTask()
    //tilt down
    else if(Controller1.ButtonB.pressing())
    {
-     tilter.setBrake(brakeType::hold);
+     tilter.setBrake(brakeType::coast);
      while(!tilterLimit.pressing())
      {
        tilter.spin(directionType::rev, 100, percentUnits::pct);
@@ -272,7 +276,7 @@ void usercontrol( void )
  rightIntake.setBrake(brakeType::hold);
  leftIntake.setBrake(brakeType::hold);
  lift.setBrake(brakeType::hold);
- tilter.setBrake(brakeType::hold);
+ tilter.setBrake(brakeType::coast);
  
  lift.startSpinTo(2300, rotationUnits::raw, 100, velocityUnits::pct);
  leftIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
