@@ -44,23 +44,209 @@ int printing()
    task::sleep(200);
  }
 }
+void leftTurn(double val)
+{
+    rightFront.resetRotation();
+    leftFront.resetRotation();
+    rightBack.resetRotation();
+    leftBack.resetRotation();
+    rightFront.setBrake(vex::brakeType::brake);
+    leftFront.setBrake(vex::brakeType::brake);
+    rightBack.setBrake(vex::brakeType::brake);
+    leftBack.setBrake(vex::brakeType::brake);
+
+    double pConstant=0.1;
+    double iConstant=0.001;
+    double dConstant=0.0002;
+    double error=0;
+    double targetValue=gyroacc.rotation(vex::rotationUnits::deg)-(val*68);
+    double speed=0;
+    double integral=0;
+    double derivative=0;
+    double prevError=0;
+    bool first=true;
+    while(error>10||first==true)
+    {
+      first=false;
+      double avg=gyroacc.rotation(vex::rotationUnits::deg);
+      
+      error=targetValue-avg;
+      error=abs(error);
+      
+      integral+=error;
+      if(error>10){
+        integral=0;
+      }
+      derivative=abs(error-prevError);
+      prevError=error;
+      //Controller1.Screen.print("%f",error);
+      speed=abs(pConstant*error)+abs(iConstant*integral);
+      Controller1.Screen.clearLine();
+      Controller1.Screen.print("%f",speed);
+      //1*1000+1*100+1*1
+      rightFront.spin(vex::directionType::fwd, abs(speed), vex::voltageUnits::volt);
+      leftFront.spin(vex::directionType::rev, abs(speed), vex::voltageUnits::volt);
+      rightBack.spin(vex::directionType::fwd, abs(speed), vex::voltageUnits::volt);
+      leftBack.spin(vex::directionType::rev, abs(speed), vex::voltageUnits::volt);
+      vex::task::sleep(10);
+    }
+    Controller1.Screen.print("%s","Done");
+    rightFront.stop();
+    leftFront.stop();
+    rightBack.stop();
+    leftBack.stop();
+    return;
+}
+void rightTurn(double val)
+{
+    rightFront.resetRotation();
+    leftFront.resetRotation();
+    rightBack.resetRotation();
+    leftBack.resetRotation();
+    rightFront.setBrake(vex::brakeType::brake);
+    leftFront.setBrake(vex::brakeType::brake);
+    rightBack.setBrake(vex::brakeType::brake);
+    leftBack.setBrake(vex::brakeType::brake);
+
+    double pConstant=0.01;
+    double iConstant=0.001;
+    double dConstant=0.0002;
+    double error=0;
+    double targetValue=gyroacc.rotation(vex::rotationUnits::deg)+(val*70);
+    double speed=0;
+    double integral=0;
+    double derivative=0;
+    double prevError=0;
+    bool first=true;
+    while(error>10||first==true)
+    {
+      first=false;
+      double avg=gyroacc.rotation(vex::rotationUnits::deg);
+      //Controller1.Screen.clearScreen();
+      //Controller1.Screen.print("%f",avg);
+      error=targetValue-avg;
+      integral+=error;
+      if(error<10){
+        integral=0;
+      }
+      derivative=error-prevError;
+      prevError=error;
+      //Controller1.Screen.print("%f",error);
+      speed=pConstant*error+iConstant*integral;
+      //1*1000+1*100+1*1
+      rightFront.spin(vex::directionType::rev, speed, vex::voltageUnits::volt);
+      leftFront.spin(vex::directionType::fwd, speed, vex::voltageUnits::volt);
+      rightBack.spin(vex::directionType::rev, speed, vex::voltageUnits::volt);
+      leftBack.spin(vex::directionType::fwd, speed, vex::voltageUnits::volt);
+      vex::task::sleep(10);
+    }
+    Controller1.Screen.print("%s","Done");
+    rightFront.stop();
+    leftFront.stop();
+    rightBack.stop();
+    leftBack.stop();
+    return;
+}
+void stack()
+{
+  tilter.setBrake(brakeType::hold);
+  double speedTilter=-0.004*tilter.rotation(rotationUnits::raw)+90;
+  while(tilter.rotation(rotationUnits::raw)<dropOff)
+  {
+    if(tilter.rotation(rotationUnits::raw)>2300)
+    {
+      tilter.setBrake(brakeType::coast);
+    }
+    speedTilter=-0.004*tilter.rotation(rotationUnits::raw)+90;
+    tilter.spin(directionType::fwd, speedTilter, percentUnits::pct);
+    task::sleep(100);
+  }
+  tilter.stop();
+  tilter.setBrake(brakeType::hold);
+  trayUp=true;
+}
+void deploy()
+{
+  rightIntake.setBrake(brakeType::hold);
+ leftIntake.setBrake(brakeType::hold);
+ lift.setBrake(brakeType::hold);
+ tilter.setBrake(brakeType::coast);
+ 
+ lift.startSpinTo(2300, rotationUnits::raw, 100, velocityUnits::pct);
+ leftIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
+ rightIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
+ tilter.spinTo(1600, rotationUnits::raw, 100, velocityUnits::pct);
+ vex::task::sleep(500);
+ leftIntake.startSpinTo(-5000, rotationUnits::raw, 100, velocityUnits::pct);
+ rightIntake.startSpinTo(-5000, rotationUnits::raw, 100, velocityUnits::pct);
+ if(!liftLimit.pressing())
+     {
+       lift.spin(directionType::rev, 100, percentUnits::pct);
+       task::sleep(300);
+     }
+     while(!liftLimit.pressing() || !tilterLimit.pressing())
+     {
+       if(!liftLimit.pressing())
+         lift.spin(directionType::rev, 100, percentUnits::pct);
+       else
+         lift.stop();
+       if(!tilterLimit.pressing())
+         tilter.spin(directionType::rev, 100, percentUnits::pct);
+       else
+         tilter.stop();
+     }
+     lift.stop();
+     tilter.stop();
+}
+void redSmall()
+{
+
+}
+void redLarge()
+{
+  
+}
+void blueSmall()
+{
+  
+}
+void blueLarge()
+{
+  
+}
 void autonomous( void ) 
 {
- gyroacc.calibrate();
- task::sleep(2000);
  // ..........................................................................
  // https://www.vexforum.com/t/vexcode-motor-groups-and-drivetrain-example/69161
  // left axel to right axel
  // front axel to back axel
  // ..........................................................................
+  leftFront.setBrake(brakeType::brake);
+  rightFront.setBrake(brakeType::brake);
+  leftBack.setBrake(brakeType::brake);
+  rightBack.setBrake(brakeType::brake);
   motor_group leftDrive(leftFront, leftBack);
   motor_group rightDrive(rightFront, rightBack);
-  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 10.25, distanceUnits::in, 1);
-  //vex::task d(printing);
-  Drivetrain.turnFor(turnType::left, 90, rotationUnits::deg, 20, velocityUnits::pct);
-
-  //Drivetrain.driveFor(directionType::rev, 17.5, distanceUnits::in, 25, velocityUnits::pct,1);
-  Controller1.Screen.print("%s","done");
+  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
+  //deploy();
+  //redSmall();
+  //redLarge();
+  //blueSmall();
+  //blueLarge();
+  //18.5 (1 square) is the amt of inches to move forward
+  Drivetrain.driveFor(directionType::fwd, 18.5, distanceUnits::in, 30, velocityUnits::pct,1);
+  //sleep
+  task::sleep(400);
+  //1=90 degrees
+  leftTurn(1);
+  rightTurn(1);
+  //start intake
+  rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
+  leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
+  rightTurn(1);
+  //stop intake
+  rightIntake.stop();
+  leftIntake.stop();
  }
 
 int driveTask()
@@ -240,11 +426,16 @@ int fullTask()
      double speedTilter=-0.004*tilter.rotation(rotationUnits::raw)+90;
      while(tilter.rotation(rotationUnits::raw)<dropOff)
      {
+       if(tilter.rotation(rotationUnits::raw)>2300)
+       {
+         tilter.setBrake(brakeType::coast);
+       }
        speedTilter=-0.004*tilter.rotation(rotationUnits::raw)+90;
        tilter.spin(directionType::fwd, speedTilter, percentUnits::pct);
        task::sleep(100);
      }
      tilter.stop();
+     tilter.setBrake(brakeType::hold);
      trayUp=true;
      while(Controller1.ButtonA.pressing())
      {
@@ -301,7 +492,8 @@ void usercontrol( void )
        else
          tilter.stop();
      }
-
+     lift.stop();
+     tilter.stop();
  vex::task d(driveTask);
  vex::task f(fullTask);
  vex::task p(printTask);
@@ -311,12 +503,14 @@ void usercontrol( void )
  }
 }
 int main() {
+   //Run the pre-autonomous function.
+   vexcodeInit();
+
    //Set up callbacks for autonomous and driver control periods.
    Competition.autonomous( autonomous );
    Competition.drivercontrol( usercontrol );
   
-   //Run the pre-autonomous function.
-   vexcodeInit();
+
      
    //Prevent main from exiting with an infinite loop.                       
    while(1) {

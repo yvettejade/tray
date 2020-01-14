@@ -8,16 +8,16 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-inertial gyroacc = inertial(PORT10);
+inertial gyroacc = inertial(PORT16);
 controller Controller1 = controller(primary);
 motor tilter = motor(PORT9, ratio18_1, false);
 motor lift = motor(PORT7, ratio18_1, true);
 motor rightIntake = motor(PORT4, ratio18_1, true);
 motor leftIntake = motor(PORT3, ratio18_1, false);
-motor rightFront = motor(PORT19, ratio18_1, false);
-motor rightBack = motor(PORT12, ratio18_1, false);
-motor leftFront = motor(PORT17, ratio18_1, true);
-motor leftBack = motor(PORT14, ratio18_1, true);
+motor rightFront = motor(PORT19, ratio18_1, false);//false
+motor rightBack = motor(PORT12, ratio18_1, false);//false
+motor leftFront = motor(PORT17, ratio18_1, true);//true
+motor leftBack = motor(PORT14, ratio18_1, true);//true
 limit liftLimit = limit(Brain.ThreeWirePort.A);
 limit tilterLimit = limit(Brain.ThreeWirePort.B);
 line lineCheck = line(Brain.ThreeWirePort.E);
@@ -33,4 +33,7 @@ bool RemoteControlCodeEnabled = true;
  */
 void vexcodeInit( void ) {
   // nothing to initialize
+  gyroacc.calibrate();
+  task::sleep(2000);
+  Brain.Screen.print("%s", "gyro ready");
 }
