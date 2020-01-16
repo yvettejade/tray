@@ -299,15 +299,10 @@ void autonomous( void )
  motor_group rightDrive(rightFront, rightBack);
  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
 
-leftTurn(1); 
-//deploy
- //Drivetrain.driveFor(directionType::fwd, (18.5), distanceUnits::in, 20, velocityUnits::pct,1);
- /*task::sleep(300);
- deploy();
+ Drivetrain.driveFor(directionType::fwd, (18.5), distanceUnits::in, 20, velocityUnits::pct,1);
  task::sleep(300);
- leftTurn(0.15);
- blueSmall(); */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-
+ deploy();
+ task::sleep(300);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 }
  
 int driveTask()
@@ -337,7 +332,6 @@ int printTask()
  
 while(true)
 {
-  Controller1.Screen.clearLine();
   if(liftLimit.pressing())
   {
     armsDown=true;
@@ -349,13 +343,11 @@ while(true)
   //tray down
   if(tilterLimit.pressing())
   {
-   Controller1.Screen.print("%s","T");
    down=1;
   }
   //tray stacking
   else if(!tilterLimit.pressing() && armsDown==true)
   {
-   Controller1.Screen.print("%s","F");
    down=0;
   }
   //tray down but arms up
@@ -367,53 +359,6 @@ while(true)
 }
 }
 bool spinning=false;
-void lineWork(int val)
-{
-bool high=false;
-Brain.resetTimer();
-while(lineCheck.value(analogUnits::range12bit)>2850 && Brain.timer(timeUnits::sec)<2)
-{
-  high=true;
-  rightIntake.spin(directionType::rev, 100, percentUnits::pct);
-  leftIntake.spin(directionType::rev, 100, percentUnits::pct);
-}
-if(high==true)
-{
-  rightIntake.spin(directionType::rev, 100, percentUnits::pct);
-  leftIntake.spin(directionType::rev, 100, percentUnits::pct);
-  vex::task::sleep(val);
-  rightIntake.stop();
-  leftIntake.stop();
-}
-}
-/*int breakTask()
-{
-  while(true)
-  {
-    if(Controller1.ButtonX.pressing())
-    {
-    
-      tilter.setBrake(brakeType::coast);
-      if(!liftLimit.pressing())
-      {
-        lift.spin(directionType::rev, 100, percentUnits::pct);
-        task::sleep(300);
-      }
-      while(!liftLimit.pressing() || !tilterLimit.pressing())
-      {
-        if(!liftLimit.pressing())
-          lift.spin(directionType::rev, 100, percentUnits::pct);
-        else
-          lift.stop();
-        if(!tilterLimit.pressing())
-          tilter.spin(directionType::rev, 100, percentUnits::pct);
-        else
-          tilter.stop();
-      }
-    }
-    task::sleep(10);
-  }
-}*/
 int fullTask()
 {
 while(true)
@@ -567,6 +512,7 @@ if(!liftLimit.pressing())
     tilter.stop();*/
 vex::task d(driveTask);
 vex::task f(fullTask);
+vex::task p(printTask);
 
 while (1)
 {
