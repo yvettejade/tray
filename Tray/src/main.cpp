@@ -59,7 +59,7 @@ void leftTurn(double val)
    double iConstant=0.001;
    double dConstant=0.0002;
    double error=0;
-   double targetValue=gyroacc.rotation(vex::rotationUnits::deg)-(val*68);
+   double targetValue=gyroacc.rotation(vex::rotationUnits::deg)-(val*79);
    double speed=0;
    double integral=0;
    double derivative=0;
@@ -95,7 +95,7 @@ void leftTurn(double val)
      leftBack.spin(vex::directionType::rev, abs(speed), vex::voltageUnits::volt);
      vex::task::sleep(10);
    }
-   //Controller1.Screen.print("%s","Done");
+   Controller1.Screen.print("%s","Done");
    rightFront.stop();
    leftFront.stop();
    rightBack.stop();
@@ -113,11 +113,11 @@ void rightTurn(double val)
    rightBack.setBrake(vex::brakeType::brake);
    leftBack.setBrake(vex::brakeType::brake);
  
-   double pConstant=0.15;
+   double pConstant=0.08;
    double iConstant=0.001;
    double dConstant=0.0002;
    double error=0;
-   double targetValue=gyroacc.rotation(vex::rotationUnits::deg)+(val*70);
+   double targetValue=gyroacc.rotation(vex::rotationUnits::deg)+(val*74);
    double speed=0;
    double integral=0;
    double derivative=0;
@@ -132,8 +132,8 @@ void rightTurn(double val)
       return;
      first=false;
      double avg=gyroacc.rotation(vex::rotationUnits::deg);
-     /*Controller1.Screen.clearLine();
-     Controller1.Screen.print("%f",avg);*/
+     //Controller1.Screen.clearLine();
+     //Controller1.Screen.print("%f",avg);
      error=targetValue-avg;
      integral+=error;
      if(error<10){
@@ -150,7 +150,7 @@ void rightTurn(double val)
      leftBack.spin(vex::directionType::fwd, speed, vex::voltageUnits::volt);
      vex::task::sleep(10);
    }
-   //Controller1.Screen.print("%s","Done");
+   Controller1.Screen.print("%s","Done");
    rightFront.stop();
    leftFront.stop();
    rightBack.stop();
@@ -180,12 +180,12 @@ void deploy()
   motor_group leftDrive(leftFront, leftBack);
   motor_group rightDrive(rightFront, rightBack);
   smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
-
+ 
  rightIntake.setBrake(brakeType::hold);
  leftIntake.setBrake(brakeType::hold);
  lift.setBrake(brakeType::hold);
  tilter.setBrake(brakeType::coast);
-  lift.startSpinTo(2300, rotationUnits::raw, 100, velocityUnits::pct);
+ lift.startSpinTo(2300, rotationUnits::raw, 100, velocityUnits::pct);
  leftIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
  rightIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
  tilter.spinTo(1600, rotationUnits::raw, 100, velocityUnits::pct);
@@ -283,7 +283,7 @@ void blueSmall()
 }
 void blueLarge()
 {
- }
+}
 void autonomous( void )
 {
 // ..........................................................................
@@ -298,13 +298,15 @@ void autonomous( void )
  motor_group leftDrive(leftFront, leftBack);
  motor_group rightDrive(rightFront, rightBack);
  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
-  //deploy
- Drivetrain.driveFor(directionType::fwd, (18.5*0.45), distanceUnits::in, 20, velocityUnits::pct,1);
- task::sleep(300);
+
+leftTurn(1); 
+//deploy
+ //Drivetrain.driveFor(directionType::fwd, (18.5), distanceUnits::in, 20, velocityUnits::pct,1);
+ /*task::sleep(300);
  deploy();
  task::sleep(300);
  leftTurn(0.15);
- blueSmall();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+ blueSmall(); */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 
 }
  
@@ -384,21 +386,39 @@ if(high==true)
   leftIntake.stop();
 }
 }
+/*int breakTask()
+{
+  while(true)
+  {
+    if(Controller1.ButtonX.pressing())
+    {
+    
+      tilter.setBrake(brakeType::coast);
+      if(!liftLimit.pressing())
+      {
+        lift.spin(directionType::rev, 100, percentUnits::pct);
+        task::sleep(300);
+      }
+      while(!liftLimit.pressing() || !tilterLimit.pressing())
+      {
+        if(!liftLimit.pressing())
+          lift.spin(directionType::rev, 100, percentUnits::pct);
+        else
+          lift.stop();
+        if(!tilterLimit.pressing())
+          tilter.spin(directionType::rev, 100, percentUnits::pct);
+        else
+          tilter.stop();
+      }
+    }
+    task::sleep(10);
+  }
+}*/
 int fullTask()
 {
 while(true)
 {
-  if(Controller1.ButtonX.pressing())
-  {
-    lift.stop();
-    tilter.stop();
-    leftIntake.stop();
-    rightIntake.stop();
-    while(Controller1.ButtonX.pressing())
-    {
-      task::sleep(10);
-    }
-  }
+  
   if(Controller1.ButtonLeft.pressing())
   {
     tilter.setBrake(brakeType::coast);
@@ -520,7 +540,7 @@ rightIntake.setBrake(brakeType::hold);
 leftIntake.setBrake(brakeType::hold);
 lift.setBrake(brakeType::hold);
 tilter.setBrake(brakeType::coast);
-lift.startSpinTo(2300, rotationUnits::raw, 100, velocityUnits::pct);
+/*lift.startSpinTo(2300, rotationUnits::raw, 100, velocityUnits::pct);
 leftIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
 rightIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
 tilter.spinTo(1600, rotationUnits::raw, 100, velocityUnits::pct);
@@ -544,12 +564,45 @@ if(!liftLimit.pressing())
         tilter.stop();
     }
     lift.stop();
-    tilter.stop();
+    tilter.stop();*/
 vex::task d(driveTask);
 vex::task f(fullTask);
-vex::task p(printTask);
+
 while (1)
 {
+  if(Controller1.ButtonX.pressing())
+  {
+    lift.stop();
+    tilter.stop();
+    rightIntake.stop();
+    leftIntake.stop();
+    tilter.setBrake(brakeType::coast);
+    if(!liftLimit.pressing())
+    {
+      lift.spin(directionType::rev, 100, percentUnits::pct);
+      task::sleep(300);
+    }
+    while(!liftLimit.pressing() || !tilterLimit.pressing())
+    {
+      if(!liftLimit.pressing())
+        lift.spin(directionType::rev, 100, percentUnits::pct);
+      else
+        lift.stop();
+      if(!tilterLimit.pressing())
+        tilter.spin(directionType::rev, 100, percentUnits::pct);
+      else
+        tilter.stop();
+    }
+    f.stop();
+    while(Controller1.ButtonX.pressing())
+      task::sleep(20);
+  }
+  if(Controller1.ButtonY.pressing())
+  {
+    vex::task f(fullTask);
+    while(Controller1.ButtonY.pressing())
+      task::sleep(20);
+  }
   vex::task::sleep(20); //Sleep the task for a short amount of time to prevent wasted resources.
 }
 }

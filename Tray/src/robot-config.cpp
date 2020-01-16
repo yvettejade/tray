@@ -1,6 +1,8 @@
 #include "vex.h"
 
 using namespace vex;
+using namespace std;
+
 using signature = vision::signature;
 using code = vision::code;
 
@@ -20,7 +22,8 @@ motor leftFront = motor(PORT17, ratio18_1, true);//true
 motor leftBack = motor(PORT14, ratio18_1, true);//true
 limit liftLimit = limit(Brain.ThreeWirePort.A);
 limit tilterLimit = limit(Brain.ThreeWirePort.B);
-line lineCheck = line(Brain.ThreeWirePort.E);
+limit upLimit = limit(Brain.ThreeWirePort.G);
+limit downLimit = limit(Brain.ThreeWirePort.H);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
@@ -31,9 +34,50 @@ bool RemoteControlCodeEnabled = true;
  * 
  * This should be called at the start of your int main function.
  */
+int countTask()
+{
+  int counter=0;
+  while(true)
+  {
+    if(upLimit.pressing())
+    {
+      counter++;
+      counter%=4;
+      Controller1.Screen.clearLine();
+      if(counter==0)
+        Controller1.Screen.print("%s", "red small");
+      else if(counter==1)
+        Controller1.Screen.print("%s", "red large");
+      else if(counter==2)
+        Controller1.Screen.print("%s", "blue small");
+      else if(counter==3)
+        Controller1.Screen.print("%s", "blue large");
+      else
+        Controller1.Screen.print("%s", "uhh go up");
+    }
+    if(downLimit.pressing())
+    {
+      counter--;
+      counter%=4;
+      Controller1.Screen.clearLine();
+      if(counter==0)
+        Controller1.Screen.print("%s", "red small");
+      else if(counter==1)
+        Controller1.Screen.print("%s", "red large");
+      else if(counter==2)
+        Controller1.Screen.print("%s", "blue small");
+      else if(counter==3)
+        Controller1.Screen.print("%s", "blue large");
+      else
+        Controller1.Screen.print("%s", "uhh go up");
+    }
+    vex::task::sleep(100);
+  }
+}
 void vexcodeInit( void ) {
   // nothing to initialize
   gyroacc.calibrate();
   task::sleep(2000);
   Brain.Screen.print("%s", "gyro ready");
+  vex::task p(countTask);
 }
