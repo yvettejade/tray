@@ -74,6 +74,10 @@ Discarded input sections
                 0x0000000000000000      0x240 build/src/main.o
  .ARM.exidx.text._Z9rightTurnd
                 0x0000000000000000        0x8 build/src/main.o
+ .text._Z12deploySkillsv
+                0x0000000000000000      0x3b0 build/src/main.o
+ .ARM.exidx.text._Z12deploySkillsv
+                0x0000000000000000        0x8 build/src/main.o
  .text._Z8redSmallv
                 0x0000000000000000      0x308 build/src/main.o
  .ARM.exidx.text._Z8redSmallv
@@ -83,14 +87,14 @@ Discarded input sections
  .ARM.exidx.text._Z9blueSmallv
                 0x0000000000000000        0x8 build/src/main.o
  .text._Z8redLargev
-                0x0000000000000000      0x2e0 build/src/main.o
+                0x0000000000000000      0x2d8 build/src/main.o
  .ARM.exidx.text._Z8redLargev
                 0x0000000000000000        0x8 build/src/main.o
  .text._Z6fuckitv
                 0x0000000000000000      0x348 build/src/main.o
  .ARM.exidx.text._Z6fuckitv
                 0x0000000000000000        0x8 build/src/main.o
- .llvm_addrsig  0x0000000000000000       0x17 build/src/main.o
+ .llvm_addrsig  0x0000000000000000       0x1a build/src/main.o
  .text          0x0000000000000000        0x0 build/src/robot-config.o
  .data.RemoteControlCodeEnabled
                 0x0000000000000000        0x1 build/src/robot-config.o

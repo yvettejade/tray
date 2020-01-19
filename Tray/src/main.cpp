@@ -207,11 +207,6 @@ void deploy()
     motor_group leftDrive(leftFront, leftBack);
     motor_group rightDrive(rightFront, rightBack);
     smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
-
-    /*Drivetrain.driveFor(directionType::fwd, (18.5*0.3), distanceUnits::in, 40, velocityUnits::pct,1);
-    task::sleep(300);
-    Drivetrain.driveFor(directionType::rev, (18.5*0.2), distanceUnits::in, 40, velocityUnits::pct,1);
-    task::sleep(300);*/
     
     rightIntake.setBrake(brakeType::hold);
     leftIntake.setBrake(brakeType::hold);
@@ -251,6 +246,46 @@ void deploy()
       leftFront.spin(directionType::rev, 100, percentUnits::pct);
       leftBack.spin(directionType::rev, 100, percentUnits::pct);
       task::sleep(500);
+}
+void deploySkills()
+{
+    motor_group leftDrive(leftFront, leftBack);
+    motor_group rightDrive(rightFront, rightBack);
+    smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
+    
+    rightIntake.setBrake(brakeType::hold);
+    leftIntake.setBrake(brakeType::hold);
+    lift.setBrake(brakeType::hold);
+    tilter.setBrake(brakeType::coast);
+
+    lift.startSpinTo(2300, rotationUnits::raw, 100, velocityUnits::pct);
+    tilter.spinTo(900, rotationUnits::raw, 100, velocityUnits::pct);
+    leftIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
+    rightIntake.startSpinTo(-20000, rotationUnits::raw, 100, velocityUnits::pct);
+    tilter.spinTo(1600, rotationUnits::raw, 100, velocityUnits::pct);
+    vex::task::sleep(700);
+    leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
+    rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
+
+    Brain.resetTimer();
+    if(!liftLimit.pressing())
+        {
+          lift.spin(directionType::rev, 100, percentUnits::pct);
+          task::sleep(300);
+      }
+      while((!liftLimit.pressing() || !tilterLimit.pressing()) && Brain.timer(timeUnits::sec)<3)
+      {
+        if(!liftLimit.pressing())
+          lift.spin(directionType::rev, 100, percentUnits::pct);
+        else
+          lift.stop();
+        if(!tilterLimit.pressing())
+          tilter.spin(directionType::rev, 100, percentUnits::pct);
+        else
+          tilter.stop();
+      }
+      lift.stop();
+      tilter.stop();
 }
 void redSmall()
 {
@@ -353,8 +388,8 @@ void redLarge()
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
   Drivetrain.driveFor(directionType::fwd, 20, distanceUnits::in, 40, velocityUnits::pct);
   task::sleep(300);
-  rightTurn(1.1);
-  task::sleep(300);
+  rightTurn(1.15);
+  task::sleep(200);
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
   Drivetrain.driveFor(directionType::fwd, 6, distanceUnits::in, 40, velocityUnits::pct);
@@ -362,14 +397,14 @@ void redLarge()
   rightTurn(0.35);
   rightIntake.stop();
   leftIntake.stop();
-  Drivetrain.driveFor(directionType::rev, 18.5*1.3, distanceUnits::in, 40, velocityUnits::pct);
-  task::sleep(300);
-  rightTurn(0.8);
-  task::sleep(300);
+  Drivetrain.driveFor(directionType::rev, 18.5*1.1, distanceUnits::in, 40, velocityUnits::pct);
+  task::sleep(100);
+  rightTurn(1);
+  task::sleep(100);
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
   Drivetrain.driveFor(directionType::fwd, 20, distanceUnits::in, 40, velocityUnits::pct);
-  task::sleep(500);
+  task::sleep(300);
   stack();
 }
 void fuckit()
@@ -614,6 +649,8 @@ rightFront.setBrake(brakeType::coast);
 leftFront.setBrake(brakeType::coast);
 rightBack.setBrake(brakeType::coast);
 leftBack.setBrake(brakeType::coast);
+
+//deploySkills();
 
 vex::task d(driveTask);
 vex::task f(fullTask);
