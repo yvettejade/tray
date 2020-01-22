@@ -36,14 +36,53 @@ int armLiftLow=2075;
 bool driving=false;
 bool trayUp=false;
  
-int printing()
+/*int wheeeee(double val, double rot)
 {
-while(true)
-{
-  Controller1.Screen.print("%d",gyroacc.heading(degrees));
-  task::sleep(200);
-}
-}
+    rightFront.resetRotation();
+    leftFront.resetRotation();
+    rightBack.resetRotation();
+    leftBack.resetRotation();
+
+    double pConstant=0.015;
+    double iConstant=0.0001;
+    double dConstant=0.0005;
+    double error=0;
+    double targetValue=1000*val;
+    double targetRotation=90*rot;
+    double speed[2]={0,0};
+    double integral[2]={0,0};
+    double derivative[2]={0,0};
+    double prevError[2]={0,0};
+    bool first=true;
+    while(error>100||first==true)
+    {
+      first=false;
+      double avg=rightFront.rotation(vex::rotationUnits::raw)+leftFront.rotation(vex::rotationUnits::raw)+rightBack.rotation(vex::rotationUnits::raw)+leftBack.rotation(vex::rotationUnits::raw);
+      avg/=4;
+      error=targetValue-avg;
+      integral+=error;
+      if(error<10){
+        integral=0;
+      }
+      derivative=error-prevError;
+      prevError=error;
+      master.Screen.print("%f",error);
+      speed=pConstant*error+iConstant*integral;
+      //1*1000+1*100+1*1
+      //master.Screen.print("%f",speed);
+      rightFront.spin(vex::directionType::fwd, speed, vex::voltageUnits::volt);
+      leftFront.spin(vex::directionType::fwd, speed, vex::voltageUnits::volt);
+      rightBack.spin(vex::directionType::fwd, speed, vex::voltageUnits::volt);
+      leftBack.spin(vex::directionType::fwd, speed, vex::voltageUnits::volt);
+      vex::task::sleep(10);
+    }
+    master.Screen.print("%s","Done");
+    rightFront.stop();
+    leftFront.stop();
+    rightBack.stop();
+    leftBack.stop();
+    return 1;
+}*/
 void leftTurn(double val)
 {
    rightFront.resetRotation();
@@ -581,7 +620,7 @@ while(true)
   else if(Controller1.ButtonL2.pressing())
   {
     tilter.setBrake(brakeType::hold);
-    tilter.startSpinTo(1500, rotationUnits::raw, 100, velocityUnits::pct);
+    tilter.startSpinTo(1700, rotationUnits::raw, 100, velocityUnits::pct);
     lift.spinTo(armLiftLow, rotationUnits::raw, 100, velocityUnits::pct);
     while(Controller1.ButtonL2.pressing())
     {
