@@ -32,7 +32,7 @@ competition Competition;
  
 int dropOff=4600;
 int armLiftHigh=2850;
-int armLiftLow=2075;
+int armLiftLow=2150;
 bool driving=false;
 bool trayUp=false;
  
@@ -620,7 +620,7 @@ while(true)
   else if(Controller1.ButtonL2.pressing())
   {
     tilter.setBrake(brakeType::hold);
-    tilter.startSpinTo(1700, rotationUnits::raw, 100, velocityUnits::pct);
+    tilter.startSpinTo(1500, rotationUnits::raw, 100, velocityUnits::pct);
     lift.spinTo(armLiftLow, rotationUnits::raw, 100, velocityUnits::pct);
     while(Controller1.ButtonL2.pressing())
     {
