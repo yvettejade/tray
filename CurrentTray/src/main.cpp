@@ -151,6 +151,10 @@ void rightTurn(double val)
 }
 void stack()
 {
+  motor_group leftDrive(leftFront, leftBack);
+  motor_group rightDrive(rightFront, rightBack);
+  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
+
   //1025 20
   leftIntake.startSpinFor(directionType::rev, 1025, rotationUnits::raw, 20, velocityUnits::pct);
   rightIntake.startSpinFor(directionType::rev, 1025, rotationUnits::raw, 20, velocityUnits::pct);
@@ -159,21 +163,33 @@ void stack()
  double speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
  bool start=false;
 
- while(tilter.rotation(rotationUnits::raw)<dropOff)
+ while(tilter.rotation(rotationUnits::raw)<dropOff+100)
  {
    if(tilter.rotation(rotationUnits::raw)>2300)
    {
      tilter.setBrake(brakeType::coast);
    }
-   //if(start==false && tilter.rotation(rotationUnits::raw)>=3800)
-   // Drivetrain.driveFor(directionType::fwd, (18.5*0.1), distanceUnits::in, 10, velocityUnits::pct,0);
+   if(start==false && tilter.rotation(rotationUnits::raw)>=4500)
+   {
+     //drive forwards
+    Drivetrain.driveFor(directionType::fwd, (18.5*0.25), distanceUnits::in, 5, velocityUnits::pct,0);
+    start=true;
+   }
    speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
    tilter.spin(directionType::fwd, speedTilter, percentUnits::pct);
    task::sleep(100);
  }
  tilter.stop();
+ //the wack wait
+ vex::task::sleep(1000);
  tilter.setBrake(brakeType::hold);
  trayUp=true;
+
+
+rightIntake.spin(directionType::rev, 45, percentUnits::pct);
+leftIntake.spin(directionType::rev, 45, percentUnits::pct); 
+//drive backwards
+Drivetrain.driveFor(directionType::rev, (18.5*1), distanceUnits::in, 20, velocityUnits::pct,1);
 
   /*motor_group leftDrive(leftFront, leftBack);
   motor_group rightDrive(rightFront, rightBack);
