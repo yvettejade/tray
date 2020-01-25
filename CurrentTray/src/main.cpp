@@ -172,7 +172,7 @@ void stack()
    if(start==false && tilter.rotation(rotationUnits::raw)>=4500)
    {
      //drive forwards
-    Drivetrain.driveFor(directionType::fwd, (18.5*0.25), distanceUnits::in, 5, velocityUnits::pct,0);
+    Drivetrain.driveFor(directionType::fwd, (18.5*0.25), distanceUnits::in, 3, velocityUnits::pct,0);
     start=true;
    }
    speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
