@@ -30,11 +30,12 @@
 using namespace vex;
 competition Competition;
  
-int dropOff=4600;
+int dropOff=4500;
 int armLiftHigh=2850;
-int armLiftLow=2225;
+int armLiftLow=2800;
 bool driving=false;
 bool trayUp=false;
+int auton=0;
  
 void leftTurn(double val)
 {
@@ -156,75 +157,90 @@ void stack()
   smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
 
   //1025 20
-  leftIntake.startSpinFor(directionType::rev, 1025, rotationUnits::raw, 20, velocityUnits::pct);
-  rightIntake.startSpinFor(directionType::rev, 1025, rotationUnits::raw, 20, velocityUnits::pct);
+  leftIntake.startSpinFor(directionType::rev, 1020, rotationUnits::raw, 20, velocityUnits::pct);
+  rightIntake.startSpinFor(directionType::rev, 1020, rotationUnits::raw, 20, velocityUnits::pct);
   tilter.setBrake(brakeType::hold);
 
  double speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
  bool start=false;
 
- while(tilter.rotation(rotationUnits::raw)<dropOff+100)
- {
-   if(tilter.rotation(rotationUnits::raw)>2300)
-   {
-     tilter.setBrake(brakeType::coast);
-   }
-   if(start==false && tilter.rotation(rotationUnits::raw)>=4500)
-   {
-     //drive forwards
-    Drivetrain.driveFor(directionType::fwd, (18.5*0.25), distanceUnits::in, 3, velocityUnits::pct,0);
-    start=true;
-   }
-   speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
-   tilter.spin(directionType::fwd, speedTilter, percentUnits::pct);
-   task::sleep(100);
- }
- tilter.stop();
- //the wack wait
- vex::task::sleep(1000);
- tilter.setBrake(brakeType::hold);
- trayUp=true;
-
-
-rightIntake.spin(directionType::rev, 45, percentUnits::pct);
-leftIntake.spin(directionType::rev, 45, percentUnits::pct); 
-//drive backwards
-Drivetrain.driveFor(directionType::rev, (18.5*1), distanceUnits::in, 20, velocityUnits::pct,1);
-
-  /*motor_group leftDrive(leftFront, leftBack);
-  motor_group rightDrive(rightFront, rightBack);
-  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
-
-  leftIntake.startSpinFor(directionType::rev, 1025, rotationUnits::raw, 30, velocityUnits::pct);
-  rightIntake.spinFor(directionType::rev, 1000, rotationUnits::raw, 30, velocityUnits::pct);
-  vex::task::sleep(100);
-  leftIntake.startSpinFor(directionType::fwd, 350, rotationUnits::raw, 50, velocityUnits::pct);
-  rightIntake.spinFor(directionType::fwd, 350, rotationUnits::raw, 50, velocityUnits::pct);
-  vex::task::sleep(400);
- tilter.setBrake(brakeType::hold);
- double speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
- bool start=false;
  while(tilter.rotation(rotationUnits::raw)<dropOff)
  {
    if(tilter.rotation(rotationUnits::raw)>2300)
    {
      tilter.setBrake(brakeType::coast);
    }
-   //if(start==false && tilter.rotation(rotationUnits::raw)>=3800)
-   // Drivetrain.driveFor(directionType::fwd, (18.5*0.1), distanceUnits::in, 10, velocityUnits::pct,0);
+   /*if(start==false && tilter.rotation(rotationUnits::raw)>=4200)
+   {
+     //drive forwards
+    Drivetrain.driveFor(directionType::fwd, (18.5*0.25), distanceUnits::in, 3, velocityUnits::pct,0);
+    start=true;
+   }*/
    speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
    tilter.spin(directionType::fwd, speedTilter, percentUnits::pct);
    task::sleep(100);
  }
  tilter.stop();
+ Drivetrain.driveFor(directionType::fwd, (18.5*0.05), distanceUnits::in, 3, velocityUnits::pct,0);
+ //the wack wait
  tilter.setBrake(brakeType::hold);
  trayUp=true;
 
- task::sleep(200);
- rightIntake.spin(directionType::rev, 45, percentUnits::pct);
- leftIntake.spin(directionType::rev, 45, percentUnits::pct); 
- Drivetrain.driveFor(directionType::rev, (18.5*1), distanceUnits::in, 20, velocityUnits::pct,1);
-*/
+
+rightIntake.spin(directionType::rev, 70, percentUnits::pct);
+leftIntake.spin(directionType::rev, 70, percentUnits::pct); 
+//drive backwards
+Drivetrain.driveFor(directionType::rev, (18.5*0.2), distanceUnits::in, 20, velocityUnits::pct,1);
+tilter.startSpinTo(0, rotationUnits::raw, 100, velocityUnits::pct);
+Drivetrain.driveFor(directionType::rev, (18.5*0.55), distanceUnits::in, 20, velocityUnits::pct,1);
+
+}
+void skillsstack()
+{
+  motor_group leftDrive(leftFront, leftBack);
+  motor_group rightDrive(rightFront, rightBack);
+  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
+
+  //1025 20
+  leftIntake.startSpinFor(directionType::rev, 1020, rotationUnits::raw, 20, velocityUnits::pct);
+  rightIntake.startSpinFor(directionType::rev, 1020, rotationUnits::raw, 20, velocityUnits::pct);
+  tilter.setBrake(brakeType::hold);
+
+ double speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
+ bool start=false;
+
+ while(tilter.rotation(rotationUnits::raw)<dropOff)
+ {
+   if(tilter.rotation(rotationUnits::raw)>2300)
+   {
+     tilter.setBrake(brakeType::coast);
+   }
+   /*if(start==false && tilter.rotation(rotationUnits::raw)>=4200)
+   {
+     //drive forwards
+    Drivetrain.driveFor(directionType::fwd, (18.5*0.25), distanceUnits::in, 3, velocityUnits::pct,0);
+    start=true;
+   }*/
+   speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+80;
+   tilter.spin(directionType::fwd, speedTilter, percentUnits::pct);
+   task::sleep(100);
+ }
+ tilter.stop();
+ Drivetrain.driveFor(directionType::fwd, (18.5*0.05), distanceUnits::in, 3, velocityUnits::pct,0);
+ //the wack wait
+ tilter.setBrake(brakeType::hold);
+ trayUp=true;
+
+
+rightIntake.spin(directionType::rev, 75, percentUnits::pct);
+leftIntake.spin(directionType::rev, 75, percentUnits::pct); 
+//drive backwards
+
+task::sleep(500);
+Drivetrain.driveFor(directionType::rev, (18.5*0.2), distanceUnits::in, 20, velocityUnits::pct,1);
+tilter.startSpinTo(0, rotationUnits::raw, 100, velocityUnits::pct);
+Drivetrain.driveFor(directionType::rev, (18.5*0.35), distanceUnits::in, 20, velocityUnits::pct,1);
+
 }
 void deploy()
 {
@@ -319,16 +335,16 @@ void redSmall()
 
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  Drivetrain.driveFor(directionType::fwd, (18.5*1.8), distanceUnits::in, 35, velocityUnits::pct,1);
+  Drivetrain.driveFor(directionType::fwd, (18.5*1.9), distanceUnits::in, 35, velocityUnits::pct,1);
   task::sleep(300);
   leftTurn(0.45);
   Drivetrain.driveFor(directionType::fwd, (18.5*0.5), distanceUnits::in, 30, velocityUnits::pct,1);
   task::sleep(200);
-  Drivetrain.driveFor(directionType::rev, (18.5*0.5), distanceUnits::in, 45, velocityUnits::pct,1);
+  Drivetrain.driveFor(directionType::rev, (18.5*0.3), distanceUnits::in, 45, velocityUnits::pct,1);
   task::sleep(200);
   leftIntake.stop();
   rightIntake.stop();
-  leftTurn(1.9);
+  leftTurn(2.1);
   task::sleep(100);
   leftFront.startSpinFor(directionType::fwd, 2000, rotationUnits::raw, 50, velocityUnits::pct);
   rightFront.startSpinFor(directionType::fwd, 2000, rotationUnits::raw, 50, velocityUnits::pct);
@@ -347,35 +363,31 @@ void blueLarge()
 
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  Drivetrain.driveFor(directionType::fwd, 19, distanceUnits::in, 45, velocityUnits::pct);
-  task::sleep(200);
-
-  leftTurn(1.05);
-
-  task::sleep(200);
-
+  Drivetrain.driveFor(directionType::fwd, 19, distanceUnits::in, 30, velocityUnits::pct);
+  task::sleep(500);
+  rightTurn(1); 
+  task::sleep(400);
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  Drivetrain.driveFor(directionType::fwd, 8, distanceUnits::in, 45, velocityUnits::pct);
-  task::sleep(500);
+  Drivetrain.driveFor(directionType::fwd, 17, distanceUnits::in, 30, velocityUnits::pct);
 
-  leftTurn(0.4);
-  rightIntake.stop();
-  leftIntake.stop();
+  task::sleep(400);
 
-  Drivetrain.driveFor(directionType::rev, 18.5*1.3, distanceUnits::in, 60, velocityUnits::pct);
-  task::sleep(100);
+  rightTurn(0.55); 
+  task::sleep(400);
 
-  leftTurn(1.2);
+  Drivetrain.driveFor(directionType::fwd, 4, distanceUnits::in, 30, velocityUnits::pct);
+  rightIntake.spin(directionType::rev, 80, percentUnits::pct);
+  leftIntake.spin(directionType::rev, 80, percentUnits::pct);
+  task::sleep(600);
 
-  task::sleep(100);
-
-  rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  Drivetrain.driveFor(directionType::fwd, 18, distanceUnits::in, 45, velocityUnits::pct);
-
-  task::sleep(500);
-  stack();
+  rightIntake.spin(directionType::rev, 80, percentUnits::pct);
+  leftIntake.spin(directionType::rev, 80, percentUnits::pct);
+  vex::task::sleep(500);
+  lift.startSpinTo(900, rotationUnits::raw, 40, velocityUnits::pct);
+  vex::task::sleep(1000);
+  Drivetrain.driveFor(directionType::rev, 5, distanceUnits::in, 30, velocityUnits::pct);
+  
 }
 void blueSmall()
 {
@@ -404,35 +416,41 @@ void blueSmall()
 }
 void redLarge()
 {
-  motor_group leftDrive(leftFront, leftBack);
+    motor_group leftDrive(leftFront, leftBack);
   motor_group rightDrive(rightFront, rightBack);
   smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
 
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  Drivetrain.driveFor(directionType::fwd, 20, distanceUnits::in, 40, velocityUnits::pct);
-  task::sleep(300);
-  rightTurn(1.15);
-  task::sleep(200);
-  rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  Drivetrain.driveFor(directionType::fwd, 6, distanceUnits::in, 40, velocityUnits::pct);
+  Drivetrain.driveFor(directionType::fwd, 19, distanceUnits::in, 30, velocityUnits::pct);
   task::sleep(500);
-  rightTurn(0.35);
-  rightIntake.stop();
-  leftIntake.stop();
-  Drivetrain.driveFor(directionType::rev, 18.5*1.1, distanceUnits::in, 40, velocityUnits::pct);
-  task::sleep(100);
-  rightTurn(1);
-  task::sleep(100);
+  leftTurn(1); 
+  task::sleep(400);
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-  Drivetrain.driveFor(directionType::fwd, 20, distanceUnits::in, 40, velocityUnits::pct);
-  task::sleep(300);
-  stack();
+  Drivetrain.driveFor(directionType::fwd, 17, distanceUnits::in, 30, velocityUnits::pct);
+
+  task::sleep(400);
+
+  leftTurn(0.55); 
+  task::sleep(400);
+
+  Drivetrain.driveFor(directionType::fwd, 4, distanceUnits::in, 30, velocityUnits::pct);
+  rightIntake.spin(directionType::rev, 80, percentUnits::pct);
+  leftIntake.spin(directionType::rev, 80, percentUnits::pct);
+  task::sleep(600);
+
+  rightIntake.spin(directionType::rev, 80, percentUnits::pct);
+  leftIntake.spin(directionType::rev, 80, percentUnits::pct);
+  lift.startSpinTo(1000, rotationUnits::raw, 40, velocityUnits::pct);
+  vex::task::sleep(1000);
+  Drivetrain.driveFor(directionType::rev, 5, distanceUnits::in, 30, velocityUnits::pct);
+  
 }
-void other()
+void skills()
 {
+  //forward more
+  //tray down
   motor_group leftDrive(leftFront, leftBack);
   motor_group rightDrive(rightFront, rightBack);
   smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
@@ -453,9 +471,43 @@ void other()
   task::sleep(500);
   rightTurn(0.6);
   task::sleep(500);
-  Drivetrain.driveFor(directionType::fwd, (18.5*0.35), distanceUnits::in, 30, velocityUnits::pct,1);
+  Drivetrain.driveFor(directionType::fwd, (18.5*0.45), distanceUnits::in, 30, velocityUnits::pct,1);
   vex::task::sleep(500);
-  stack();
+
+  skillsstack();
+
+  leftTurn(1.4);
+  vex::task::sleep(500);
+  leftFront.spin(directionType::fwd, 100, percentUnits::pct);
+  leftBack.spin(directionType::fwd, 100, percentUnits::pct);
+  rightFront.spin(directionType::fwd, 100, percentUnits::pct);
+  rightBack.spin(directionType::fwd, 100, percentUnits::pct);
+  Drivetrain.driveFor(directionType::fwd, (18.5*1), distanceUnits::in, 30, velocityUnits::pct,1);
+  vex::task::sleep(500);
+  leftFront.spin(directionType::fwd, 100, percentUnits::pct);
+  leftBack.spin(directionType::fwd, 100, percentUnits::pct);
+  rightFront.spin(directionType::fwd, 100, percentUnits::pct);
+  rightBack.spin(directionType::fwd, 100, percentUnits::pct);
+  Drivetrain.driveFor(directionType::rev, (18.5*0.4), distanceUnits::in, 30, velocityUnits::pct,1);
+  vex::task::sleep(500);
+  tilter.setBrake(brakeType::hold);
+
+  leftFront.startSpinFor(directionType::rev, 50, rotationUnits::raw);
+  leftBack.startSpinFor(directionType::rev, 50, rotationUnits::raw);
+  rightFront.startSpinFor(directionType::rev, 50, rotationUnits::raw);
+  rightBack.spinFor(directionType::rev, 50, rotationUnits::raw);
+  rightIntake.stop();
+  leftIntake.stop();
+  tilter.startSpinTo(1500, rotationUnits::raw, 100, velocityUnits::pct);
+  lift.spinTo(armLiftHigh, rotationUnits::raw, 100, velocityUnits::pct);
+  vex::task::sleep(300);
+  rightIntake.spin(directionType::rev, 50, percentUnits::pct);
+  leftIntake.spin(directionType::rev, 50, percentUnits::pct);
+  
+  leftFront.startSpinFor(directionType::rev, 500, rotationUnits::raw);
+  leftBack.startSpinFor(directionType::rev, 500, rotationUnits::raw);
+  rightFront.startSpinFor(directionType::rev, 500, rotationUnits::raw);
+  rightBack.startSpinFor(directionType::rev, 500, rotationUnits::raw);
 }
 void fuckit()
 {
@@ -505,12 +557,12 @@ void autonomous( void )
  motor_group rightDrive(rightFront, rightBack);
  smartdrive Drivetrain= smartdrive(leftDrive, rightDrive, gyroacc, 12.56, 9.25, 8, distanceUnits::in, 1);
  
- //deploy();   
- //other();
- stack();
+ deploy();   
+ //skills();
+ //stack();
  //redLarge();  
  //redSmall();
- //blueLarge();
+blueLarge();
  //blueSmall();        
  //fuckit();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 }
@@ -534,6 +586,24 @@ while(true)
   vex::task::sleep(2);
 }
 return 0;
+}
+
+bool passed=false;
+int lineTask()
+{
+  while(true)
+  {
+    Brain.Screen.clearLine();
+    Brain.Screen.print("%d",lineSensor.value(analogUnits::range12bit));
+
+    if(lineSensor.value(analogUnits::range12bit)<100)
+    {
+      Controller1.Screen.print("%s","sajgdhfksa");
+      passed=true;
+    }
+    vex::task::sleep(200);
+  }
+  return 0;
 }
 bool armsDown=false;
 int down=0;
@@ -575,6 +645,9 @@ while(true)
 {
   if(Controller1.ButtonLeft.pressing())
   {
+    rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
+    leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
+
     tilter.setBrake(brakeType::coast);
     if(!liftLimit.pressing())
     {
@@ -592,6 +665,8 @@ while(true)
       else
         tilter.stop();
     }
+    rightIntake.stop();
+    leftIntake.stop(); 
   }
   //intake
   if(Controller1.ButtonR1.pressing())
@@ -600,14 +675,10 @@ while(true)
     rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   }
   //outtake
-  else if(Controller1.ButtonR2.pressing() || (down==0 && driving))
+  else if(Controller1.ButtonR2.pressing())
   {
     spinning=true;
-    int speed=0;
-    if(Controller1.ButtonR2.pressing())
-      speed=100;
-    if(down==0 && driving)
-      speed=45;
+    int speed=100;
     leftIntake.spin(directionType::rev, speed, percentUnits::pct);
     rightIntake.spin(directionType::rev, speed, percentUnits::pct);
   }
@@ -620,9 +691,25 @@ while(true)
   //medium tower
   if(Controller1.ButtonL1.pressing())
   {
+    passed=false;
     tilter.setBrake(brakeType::hold);
-    tilter.startSpinTo(1500, rotationUnits::raw, 100, velocityUnits::pct);
-    lift.spinTo(armLiftHigh, rotationUnits::raw, 100, velocityUnits::pct);
+    rightIntake.setBrake(brakeType::hold);
+    leftIntake.setBrake(brakeType::hold);
+
+    lift.startSpinTo(2800, rotationUnits::raw, 100, velocityUnits::pct);
+    vex::task::sleep(200);
+    rightIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
+    leftIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
+    while(true)
+    {
+      if(lift.rotation(rotationUnits::raw)>=500)
+      {
+        tilter.startSpinTo(600, rotationUnits::raw, 100, velocityUnits::pct);
+        lift.spinTo(2800, rotationUnits::raw, 100, velocityUnits::pct);
+        break;
+      }
+      vex::task::sleep(50);
+    }
     while(Controller1.ButtonL1.pressing())
     {
       task::sleep(20);
@@ -631,9 +718,24 @@ while(true)
   //low tower
   else if(Controller1.ButtonL2.pressing())
   {
+    passed=false;
     tilter.setBrake(brakeType::hold);
-    tilter.startSpinTo(1500, rotationUnits::raw, 100, velocityUnits::pct);
-    lift.spinTo(armLiftLow, rotationUnits::raw, 100, velocityUnits::pct);
+
+    lift.startSpinTo(2250, rotationUnits::raw, 100, velocityUnits::pct);
+    vex::task::sleep(200);
+    rightIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
+    leftIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
+    while(true)
+    {
+      if(lift.rotation(rotationUnits::raw)>=500)
+      {
+        tilter.startSpinTo(600, rotationUnits::raw, 100, velocityUnits::pct);
+        lift.spinTo(2250, rotationUnits::raw, 100, velocityUnits::pct);
+        break;
+      }
+      vex::task::sleep(50);
+    }
+
     while(Controller1.ButtonL2.pressing())
     {
       task::sleep(20);
@@ -646,23 +748,42 @@ while(true)
   //tilt up
   if(Controller1.ButtonA.pressing())
   {
-    lift.spin(directionType::rev, 5, velocityUnits::pct);
     tilter.setBrake(brakeType::hold);
-    double speedTilter=-0.013*tilter.rotation(rotationUnits::raw)+80;
+
+    //Brain.Screen.print("%s %d", "                             ",trayLine.value(analogUnits::range12bit));
+    //rightIntake.startSpinFor(directionType::rev, 400, rotationUnits::raw, 100, velocityUnits::pct);
+    //leftIntake.startSpinFor(directionType::rev, 400, rotationUnits::raw, 100, velocityUnits::pct);
+    
+    /*while(lineSensor.value(analogUnits::range12bit)>2500)
+    {
+      rightIntake.spin(directionType::rev, 100, percentUnits::pct);
+      leftIntake.spin(directionType::rev, 100, percentUnits::pct);
+    }
+    vex::task::sleep(100);
+    rightIntake.stop();
+    leftIntake.stop();
+    vex::task::sleep(200);*/
+
+    double speedTilter=-0.015*tilter.rotation(rotationUnits::raw)+100;
+
+    bool holding=true;
     while(tilter.rotation(rotationUnits::raw)<dropOff)
     {
-      if(tilter.rotation(rotationUnits::raw)>2300)
+      speedTilter=-0.015*tilter.rotation(rotationUnits::raw)+100;
+      //printf("%6.6f\n",speedTilter);
+      if(holding==true && tilter.rotation(rotationUnits::raw)>dropOff/1.5)
       {
-        tilter.setBrake(brakeType::coast);
+        rightIntake.setBrake(brakeType::coast);
+        leftIntake.setBrake(brakeType::coast);
+        holding=false;
       }
-      speedTilter=-0.01*tilter.rotation(rotationUnits::raw)+90;
-      printf("%6.6f\n",speedTilter);
       tilter.spin(directionType::fwd, speedTilter, percentUnits::pct);
       task::sleep(100);
     }
     tilter.stop();
-    lift.stop();
     tilter.setBrake(brakeType::hold);
+    rightIntake.setBrake(brakeType::hold);
+    leftIntake.setBrake(brakeType::hold);
     trayUp=true;
     while(Controller1.ButtonA.pressing())
     {
@@ -705,6 +826,7 @@ leftBack.setBrake(brakeType::coast);
 vex::task d(driveTask);
 vex::task f(fullTask);
 vex::task p(printTask);
+vex::task l(lineTask);
 
 while (1)
 {
@@ -741,13 +863,86 @@ while (1)
     while(Controller1.ButtonY.pressing())
       task::sleep(20);
   }
-  vex::task::sleep(20); //Sleep the task for a short amount of time to prevent wasted resources.
+  vex::task::sleep(20); 
 }
+}
+void autonSelector()
+{
+  Brain.Screen.clearLine();
+  limit upLimit = limit(Brain.ThreeWirePort.G);
+  limit downLimit = limit(Brain.ThreeWirePort.H);
+  while(true)
+  {
+    if(upLimit.pressing())
+    {
+      auton++;
+      if(auton>4)
+        auton=4;
+      if(auton==0)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             red protected");
+      }
+      else if(auton==1)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             red unprotected");
+      }
+      else if(auton==2)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             blue protected");
+      }
+      else if(auton==3)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             blue unprotected");
+      }
+      else if(auton==4)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             skills");
+      }
+    }
+    if(downLimit.pressing())
+    {
+      auton--;
+      if(auton<0)
+        auton=0;
+      if(auton==0)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             red protected");
+      }
+      else if(auton==1)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             red unprotected");
+      }
+      else if(auton==2)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             blue protected");
+      }
+      else if(auton==3)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             blue unprotected");
+      }
+      else if(auton==4)
+      {
+        Brain.Screen.clearLine();
+        Brain.Screen.print("%s","                             skills");
+      }
+    }
+    
+    vex::task::sleep(200);
+  }
 }
 int main() {
   //Run the pre-autonomous function.
   vexcodeInit();
- 
+  autonSelector();
   //Set up callbacks for autonomous and driver control periods.
   Competition.autonomous( autonomous );
   Competition.drivercontrol( usercontrol );

@@ -18,10 +18,9 @@ motor leftFront = motor(PORT17, ratio18_1, true);
 motor leftBack = motor(PORT14, ratio18_1, true);
 limit liftLimit = limit(Brain.ThreeWirePort.A);
 limit tilterLimit = limit(Brain.ThreeWirePort.B);
-line lineSensor = line(Brain.ThreeWirePort.D);
+line lineSensor = line(Brain.ThreeWirePort.E);
 controller Controller1 = controller(primary);
 inertial gyroacc = inertial(PORT16);
-
 // VEXcode generated functions
 // define variable for remote controller enable/disable
 bool RemoteControlCodeEnabled = true;
@@ -31,10 +30,11 @@ bool RemoteControlCodeEnabled = true;
  * 
  * This should be called at the start of your int main function.
  */
-void vexcodeInit( void ) 
+void vexcodeInit(void) 
 {
   // nothing to initialize
+  Brain.Screen.print("%s", "                          Hold on, calibrating.");
   gyroacc.calibrate();
   task::sleep(2500);
-  Brain.Screen.print("%s", "gyro ready");
+  Controller1.Screen.print("%s", "gyro ready");
 }
