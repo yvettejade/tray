@@ -791,6 +791,7 @@ while(true)
 }
 void usercontrol( void )
 {
+  lift.resetRotation();
 rightIntake.setBrake(brakeType::hold);
 leftIntake.setBrake(brakeType::hold);
 lift.setBrake(brakeType::hold);
