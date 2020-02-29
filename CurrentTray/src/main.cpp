@@ -650,11 +650,16 @@ while(true)
         lift.spin(directionType::rev, 100, percentUnits::pct);
       else
         lift.stop();
+
       if(!tilterLimit.pressing())
         tilter.spin(directionType::rev, 100, percentUnits::pct);
       else
         tilter.stop();
     }
+    tilter.stop();
+    lift.stop();
+    tilter.stop();
+    lift.stop();
     rightIntake.stop();
     leftIntake.stop(); 
     vex::task::sleep(200);
@@ -677,8 +682,13 @@ while(true)
     leftIntake.spin(directionType::rev, 100, percentUnits::pct);
     rightIntake.spin(directionType::rev, 100, percentUnits::pct);
   }
+  else
+  {
+    rightIntake.stop();
+    leftIntake.stop();
+  }
   //medium tower
-  else if(Controller1.ButtonL1.pressing())
+  if(Controller1.ButtonL1.pressing())
   {
     tilter.setBrake(brakeType::hold);
 
@@ -786,16 +796,14 @@ while(true)
   else
   {
     lift.stop();
-    spinning=false;
-    rightIntake.stop();
-    leftIntake.stop();
   }
   task::sleep(100);
 }
 }
 void usercontrol( void )
 {
-  lift.resetRotation();
+lift.resetRotation();
+tilter.resetRotation();
 rightIntake.setBrake(brakeType::hold);
 leftIntake.setBrake(brakeType::hold);
 lift.setBrake(brakeType::hold);
