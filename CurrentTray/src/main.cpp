@@ -539,6 +539,7 @@ void fuckit()
   task::sleep(300);
   rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
+  
   Drivetrain.driveFor(directionType::fwd, (18.5*1.5), distanceUnits::in, 33, velocityUnits::pct,1);
   
 }
@@ -587,24 +588,6 @@ while(true)
 }
 return 0;
 }
-
-bool passed=false;
-int lineTask()
-{
-  while(true)
-  {
-    Brain.Screen.clearLine();
-    Brain.Screen.print("%d",lineSensor.value(analogUnits::range12bit));
-
-    if(lineSensor.value(analogUnits::range12bit)<100)
-    {
-      Controller1.Screen.print("%s","sajgdhfksa");
-      passed=true;
-    }
-    vex::task::sleep(200);
-  }
-  return 0;
-}
 bool armsDown=false;
 int down=0;
 int printTask()
@@ -638,17 +621,28 @@ while(true)
   task::sleep(200);
 }
 }
+int lineTask()
+{
+  while(true)
+  {
+    Brain.Screen.clearLine();
+    Brain.Screen.print("%d", lineSensor.value(analogUnits::range12bit));
+    vex::task::sleep(200);
+  }
+  //return 0;
+}
 bool spinning=false;
 int fullTask()
 {
 while(true)
 {
+  
   if(Controller1.ButtonLeft.pressing())
   {
-    rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
-    leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
-
     tilter.setBrake(brakeType::coast);
+    leftIntake.spin(directionType::rev, 30, percentUnits::pct);
+    rightIntake.spin(directionType::rev, 30, percentUnits::pct);
+    
     if(!liftLimit.pressing())
     {
       lift.spin(directionType::rev, 100, percentUnits::pct);
@@ -667,6 +661,9 @@ while(true)
     }
     rightIntake.stop();
     leftIntake.stop(); 
+    vex::task::sleep(200);
+    rightIntake.startSpinFor(directionType::fwd, 700, rotationUnits::raw, 100, velocityUnits::pct);
+    leftIntake.spinFor(directionType::fwd, 700, rotationUnits::raw, 100, velocityUnits::pct);
   }
   //intake
   if(Controller1.ButtonR1.pressing())
@@ -675,10 +672,14 @@ while(true)
     rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   }
   //outtake
-  else if(Controller1.ButtonR2.pressing())
+  else if(Controller1.ButtonR2.pressing() || (down==0 && driving))
   {
     spinning=true;
-    int speed=100;
+    int speed=0;
+    if(Controller1.ButtonR2.pressing())
+      speed=100;
+    //if(down==0 && driving)
+    //  speed=45;
     leftIntake.spin(directionType::rev, speed, percentUnits::pct);
     rightIntake.spin(directionType::rev, speed, percentUnits::pct);
   }
@@ -691,12 +692,11 @@ while(true)
   //medium tower
   if(Controller1.ButtonL1.pressing())
   {
-    passed=false;
     tilter.setBrake(brakeType::hold);
     rightIntake.setBrake(brakeType::hold);
     leftIntake.setBrake(brakeType::hold);
 
-    lift.startSpinTo(2800, rotationUnits::raw, 100, velocityUnits::pct);
+    lift.startSpinTo(2700, rotationUnits::raw, 100, velocityUnits::pct);
     vex::task::sleep(200);
     rightIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
     leftIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
@@ -704,8 +704,8 @@ while(true)
     {
       if(lift.rotation(rotationUnits::raw)>=500)
       {
-        tilter.startSpinTo(600, rotationUnits::raw, 100, velocityUnits::pct);
-        lift.spinTo(2800, rotationUnits::raw, 100, velocityUnits::pct);
+        tilter.startSpinTo(900, rotationUnits::raw, 100, velocityUnits::pct);
+        lift.spinTo(2700, rotationUnits::raw, 100, velocityUnits::pct);
         break;
       }
       vex::task::sleep(50);
@@ -718,10 +718,9 @@ while(true)
   //low tower
   else if(Controller1.ButtonL2.pressing())
   {
-    passed=false;
     tilter.setBrake(brakeType::hold);
 
-    lift.startSpinTo(2250, rotationUnits::raw, 100, velocityUnits::pct);
+    lift.startSpinTo(2900, rotationUnits::raw, 100, velocityUnits::pct);
     vex::task::sleep(200);
     rightIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
     leftIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
@@ -729,8 +728,8 @@ while(true)
     {
       if(lift.rotation(rotationUnits::raw)>=500)
       {
-        tilter.startSpinTo(600, rotationUnits::raw, 100, velocityUnits::pct);
-        lift.spinTo(2250, rotationUnits::raw, 100, velocityUnits::pct);
+        tilter.startSpinTo(900, rotationUnits::raw, 100, velocityUnits::pct);
+        lift.spinTo(2200, rotationUnits::raw, 100, velocityUnits::pct);
         break;
       }
       vex::task::sleep(50);
@@ -749,27 +748,30 @@ while(true)
   if(Controller1.ButtonA.pressing())
   {
     tilter.setBrake(brakeType::hold);
-
+    rightIntake.setBrake(brakeType::hold);
+    leftIntake.setBrake(brakeType::hold);
     //Brain.Screen.print("%s %d", "                             ",trayLine.value(analogUnits::range12bit));
-    //rightIntake.startSpinFor(directionType::rev, 400, rotationUnits::raw, 100, velocityUnits::pct);
-    //leftIntake.startSpinFor(directionType::rev, 400, rotationUnits::raw, 100, velocityUnits::pct);
-    
-    /*while(lineSensor.value(analogUnits::range12bit)>2500)
+    bool go=false;
+    while(lineSensor.value(analogUnits::range12bit)>2300)
     {
+      go=true;
       rightIntake.spin(directionType::rev, 100, percentUnits::pct);
       leftIntake.spin(directionType::rev, 100, percentUnits::pct);
+      vex::task::sleep(20);
     }
-    vex::task::sleep(100);
+    if(go==true)
+      vex::task::sleep(50);
     rightIntake.stop();
     leftIntake.stop();
-    vex::task::sleep(200);*/
 
-    double speedTilter=-0.015*tilter.rotation(rotationUnits::raw)+100;
+    vex::task::sleep(200);
+
+    double speedTilter=-0.017*tilter.rotation(rotationUnits::raw)+100;
 
     bool holding=true;
     while(tilter.rotation(rotationUnits::raw)<dropOff)
     {
-      speedTilter=-0.015*tilter.rotation(rotationUnits::raw)+100;
+      speedTilter=-0.017*tilter.rotation(rotationUnits::raw)+100;
       //printf("%6.6f\n",speedTilter);
       if(holding==true && tilter.rotation(rotationUnits::raw)>dropOff/1.5)
       {
@@ -826,7 +828,7 @@ leftBack.setBrake(brakeType::coast);
 vex::task d(driveTask);
 vex::task f(fullTask);
 vex::task p(printTask);
-vex::task l(lineTask);
+//vex::task l(lineTask);
 
 while (1)
 {
@@ -863,7 +865,7 @@ while (1)
     while(Controller1.ButtonY.pressing())
       task::sleep(20);
   }
-  vex::task::sleep(20); 
+  vex::task::sleep(20); //Sleep the task for a short amount of time to prevent wasted resources.
 }
 }
 void autonSelector()
@@ -942,7 +944,7 @@ void autonSelector()
 int main() {
   //Run the pre-autonomous function.
   vexcodeInit();
-  autonSelector();
+  //autonSelector();
   //Set up callbacks for autonomous and driver control periods.
   Competition.autonomous( autonomous );
   Competition.drivercontrol( usercontrol );

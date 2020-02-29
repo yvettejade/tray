@@ -33,8 +33,8 @@ bool RemoteControlCodeEnabled = true;
 void vexcodeInit(void) 
 {
   // nothing to initialize
-  Brain.Screen.print("%s", "                          Hold on, calibrating.");
+  //Brain.Screen.print("%s", "                          Hold on, calibrating.");
   gyroacc.calibrate();
   task::sleep(2500);
-  Controller1.Screen.print("%s", "gyro ready");
+  //Controller1.Screen.print("%s", "gyro ready");
 }
