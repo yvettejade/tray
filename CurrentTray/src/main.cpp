@@ -660,6 +660,10 @@ while(true)
     vex::task::sleep(200);
     rightIntake.startSpinFor(directionType::fwd, 700, rotationUnits::raw, 100, velocityUnits::pct);
     leftIntake.spinFor(directionType::fwd, 700, rotationUnits::raw, 100, velocityUnits::pct);
+    tilter.resetRotation();
+    lift.resetRotation();
+    while(Controller1.ButtonLeft.pressing())
+      task::sleep(50);
   }
   //intake
   else if(Controller1.ButtonR1.pressing())
@@ -774,7 +778,7 @@ while(true)
     tilter.stop();
     trayUp=false;
     tilter.resetRotation();
-    while(Controller1.ButtonA.pressing())
+    while(Controller1.ButtonB.pressing())
     {
       task::sleep(50);
     }
