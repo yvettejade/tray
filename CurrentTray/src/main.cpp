@@ -576,10 +576,7 @@ while(true)
   double rpower=Controller1.Axis2.value();
   lpower=lpower * 12.0 / 127;
   rpower=rpower * 12.0 / 127;
-  if(abs(lpower)>0.3 && abs(rpower)>0.3)
-    driving=true;
-  else
-    driving=false;
+
   rightFront.spin(vex::directionType::fwd, rpower, vex::voltageUnits::volt);
   rightBack.spin(vex::directionType::fwd, rpower, vex::voltageUnits::volt);
   leftFront.spin(vex::directionType::fwd, lpower, vex::voltageUnits::volt);
@@ -636,7 +633,6 @@ int fullTask()
 {
 while(true)
 {
-  
   if(Controller1.ButtonLeft.pressing())
   {
     tilter.setBrake(brakeType::coast);
@@ -666,36 +662,25 @@ while(true)
     leftIntake.spinFor(directionType::fwd, 700, rotationUnits::raw, 100, velocityUnits::pct);
   }
   //intake
-  if(Controller1.ButtonR1.pressing())
+  else if(Controller1.ButtonR1.pressing())
   {
     leftIntake.spin(directionType::fwd, 100, percentUnits::pct);
     rightIntake.spin(directionType::fwd, 100, percentUnits::pct);
   }
   //outtake
-  else if(Controller1.ButtonR2.pressing() || (down==0 && driving))
+  else if(Controller1.ButtonR2.pressing())
   {
-    spinning=true;
-    int speed=0;
-    if(Controller1.ButtonR2.pressing())
-      speed=100;
-    //if(down==0 && driving)
-    //  speed=45;
-    leftIntake.spin(directionType::rev, speed, percentUnits::pct);
-    rightIntake.spin(directionType::rev, speed, percentUnits::pct);
-  }
-  else
-  {
-    spinning=false;
-    rightIntake.stop();
-    leftIntake.stop();
+    leftIntake.spin(directionType::rev, 100, percentUnits::pct);
+    rightIntake.spin(directionType::rev, 100, percentUnits::pct);
   }
   //medium tower
-  if(Controller1.ButtonL1.pressing())
+  else if(Controller1.ButtonL1.pressing())
   {
     tilter.setBrake(brakeType::hold);
 
     lift.startSpinTo(2700, rotationUnits::raw, 100, velocityUnits::pct);
     vex::task::sleep(200);
+
     rightIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
     leftIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
 
@@ -706,7 +691,7 @@ while(true)
 
     while(Controller1.ButtonL1.pressing())
     {
-      task::sleep(20);
+      task::sleep(50);
     }
   }
   //low tower
@@ -726,15 +711,11 @@ while(true)
 
     while(Controller1.ButtonL2.pressing())
     {
-      task::sleep(20);
+      task::sleep(50);
     }
   }
-  else
-  {
-    lift.stop();
-  }
   //tilt up
-  if(Controller1.ButtonA.pressing())
+  else if(Controller1.ButtonA.pressing())
   {
     tilter.setBrake(brakeType::hold);
     rightIntake.setBrake(brakeType::hold);
@@ -797,6 +778,13 @@ while(true)
     {
       task::sleep(50);
     }
+  }
+  else
+  {
+    lift.stop();
+    spinning=false;
+    rightIntake.stop();
+    leftIntake.stop();
   }
   task::sleep(100);
 }
