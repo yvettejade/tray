@@ -693,23 +693,17 @@ while(true)
   if(Controller1.ButtonL1.pressing())
   {
     tilter.setBrake(brakeType::hold);
-    rightIntake.setBrake(brakeType::hold);
-    leftIntake.setBrake(brakeType::hold);
 
     lift.startSpinTo(2700, rotationUnits::raw, 100, velocityUnits::pct);
     vex::task::sleep(200);
     rightIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
     leftIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
-    while(true)
-    {
-      if(lift.rotation(rotationUnits::raw)>=500)
-      {
-        tilter.startSpinTo(900, rotationUnits::raw, 100, velocityUnits::pct);
-        lift.spinTo(2700, rotationUnits::raw, 100, velocityUnits::pct);
-        break;
-      }
-      vex::task::sleep(50);
-    }
+
+    while(lift.rotation(rotationUnits::raw)<500)
+      vex::task::sleep(20);
+
+    tilter.spinTo(650, rotationUnits::raw, 100, velocityUnits::pct);
+
     while(Controller1.ButtonL1.pressing())
     {
       task::sleep(20);
@@ -720,20 +714,15 @@ while(true)
   {
     tilter.setBrake(brakeType::hold);
 
-    lift.startSpinTo(2900, rotationUnits::raw, 100, velocityUnits::pct);
+    lift.startSpinTo(2200, rotationUnits::raw, 100, velocityUnits::pct);
     vex::task::sleep(200);
     rightIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
     leftIntake.startSpinFor(-430, rotationUnits::raw, 100, velocityUnits::pct);
-    while(true)
-    {
-      if(lift.rotation(rotationUnits::raw)>=500)
-      {
-        tilter.startSpinTo(900, rotationUnits::raw, 100, velocityUnits::pct);
-        lift.spinTo(2200, rotationUnits::raw, 100, velocityUnits::pct);
-        break;
-      }
-      vex::task::sleep(50);
-    }
+
+    while(lift.rotation(rotationUnits::raw)<500)
+      vex::task::sleep(20);
+
+    tilter.spinTo(650, rotationUnits::raw, 100, velocityUnits::pct);
 
     while(Controller1.ButtonL2.pressing())
     {
